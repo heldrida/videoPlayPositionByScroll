@@ -3,7 +3,10 @@ function VideoPlayOnScroll (params) {
 	this.params = params;
 
 	// properties
-	this.frameNr = 0
+	this.frameNr = 0;
+    this.friction = 0.01;
+	this.vy = 0;
+	this.perc = 0;
 
 	// catch error
 	try {
@@ -63,8 +66,9 @@ function VideoPlayOnScroll (params) {
 	}
 
 	this.setTime = function () {
-		this.frameNr = (window.pageYOffset / (this.video.offsetTop + this.video.offsetHeight)) * this.video.duration;
-		this.video.currentTime = this.normaliseFrameVal(this.frameNr);
+		this.perc = (window.pageYOffset / (this.video.offsetTop + this.video.offsetHeight));
+		this.frameNr = this.perc * this.video.duration;
+		this.video.currentTime += (this.perc * this.video.duration);
 	}
 
 	this.isTouching = function (el, callback) {
@@ -125,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	new VideoPlayOnScroll({
 		el: document.querySelector('video'),
 		round: false,
-		raf: false
+		raf: true
 	});
 
 }, false);
