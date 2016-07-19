@@ -9,9 +9,26 @@ video.addEventListener('loadedmetadata', function() {
 });
 
 function scrollPlay () {
-	if (window.pageYOffset <= maxY) {
-		var frameNumber = (window.pageYOffset / maxY) * video.duration;
-		video.currentTime  = frameNumber;
-		window.requestAnimationFrame(scrollPlay);
+	isTouching();
+	//if (window.pageYOffset <= maxY) {
+	//	var frameNumber = (window.pageYOffset / maxY) * video.duration;
+	//	video.currentTime  = frameNumber;
+	//	window.requestAnimationFrame(scrollPlay);
+	//}
+	var frameNumber = (window.pageYOffset / maxY) * video.duration;
+	video.currentTime  = frameNumber;
+	window.requestAnimationFrame(scrollPlay);
+}
+
+function isTouching () {
+	if (window.pageYOffset >= video.offsetTop && window.pageYOffset < (video.offsetTop + video.offsetHeight) && !video.classList.contains('active')) {
+		video.classList.add('active');
+		console.log("LOCK!");
+	} else if (window.pageYOffset > (video.offsetTop + video.offsetHeight) && video.classList.contains('active'))  {
+		video.classList.remove('active');
+		console.log("UNLOCK 'A'!");
+	} else if (window.pageYOffset < video.offsetTop && video.classList.contains('active')) {
+		video.classList.remove('active');		
+		console.log("UNLOCK 'B'!");
 	}
 }

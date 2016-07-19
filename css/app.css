@@ -1,11 +1,15 @@
 body {
-  height: 2000px;
-  background: #efe; }
+  height: 3000px;
+  background: #aff; }
 
 video {
-  margin-top: 500px;
+  margin: 300px auto;
   width: 500px;
-  height: 500px; }
+  height: 500px;
+  padding: 300px 0;
+  background-color: #fc5; }
+  video.active {
+    background-color: #5cf; }
 
 p {
   font-family: helvetica;
