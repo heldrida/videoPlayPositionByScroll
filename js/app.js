@@ -20,7 +20,7 @@ function VideoPlayOnScroll (params) {
 
 	} catch (e) {	
 
-		window.alert(e.name + " " + e.message);
+		window.alert(e.name + ' ' + e.message);
 
 	}
  
@@ -31,7 +31,15 @@ function VideoPlayOnScroll (params) {
     // initilise the scroll play after the video metadata is available
 	this.video.addEventListener('loadedmetadata', function () {
 
-		window.requestAnimationFrame(this.scrollPlay.bind(this));
+		if (this.params.raf) {
+
+			window.requestAnimationFrame(this.scrollPlay.bind(this));
+
+		} else {
+
+			window.addEventListener('scroll', this.scrollPlay.bind(this));
+
+		}
 
 	}.bind(this));
 
@@ -46,7 +54,11 @@ function VideoPlayOnScroll (params) {
 
 		this.isTouching(this.video, this.setTime.bind(this));
 
-		window.requestAnimationFrame(this.scrollPlay.bind(this));
+		if (this.params.raf) {
+
+			window.requestAnimationFrame(this.scrollPlay.bind(this));
+
+		}
 
 	}
 
@@ -112,7 +124,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	new VideoPlayOnScroll({
 		el: document.querySelector('video'),
-		round: true
+		round: false,
+		raf: false
 	});
 
 }, false);
