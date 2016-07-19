@@ -1,51 +1,78 @@
-var frameNumber = 0,
-	playback = 500,
-	video = document.querySelector('video'),
-	maxY = 750;
+function VideoPlayOnScroll (params) {
 
-video.addEventListener('loadedmetadata', function () {
-	console.log("video.duration", video.duration);
-	window.requestAnimationFrame(scrollPlay);
-});
+	// properties
+	this.frameNr = 0
 
-video.addEventListener('ended', function () {
-	console.log("video ended!");
-});
+	// catch error
+	try {
 
+		if (typeof params.el === 'undefined') {
 
-function scrollPlay () {
-	//if (window.pageYOffset <= maxY) {
-	//	var frameNumber = (window.pageYOffset / maxY) * video.duration;
-	//	video.currentTime  = frameNumber;
-	//	window.requestAnimationFrame(scrollPlay);
-	//}
+            throw new Error('Initialisation error VideoPlayOnScroll: Element missing!');
 
-	var callback = function () {
-		var frameNumber = (window.pageYOffset / (video.offsetTop + video.offsetHeight)) * video.duration;
-		video.currentTime  = frameNumber;
+		} else {
+
+			this.video = params.el;
+
+		}
+
+	} catch (e) {	
+
+		window.alert(e.name + " " + e.message);
+
+	}
+ 
+	/**
+     * Event Listeners
+     */
+	this.video.addEventListener('loadedmetadata', function () {
+		window.requestAnimationFrame(this.scrollPlay.bind(this));
+	}.bind(this));
+
+	this.video.addEventListener('ended', function () {
+		console.log('video ended!');
+	}.bind(this));
+
+	this.scrollPlay = function () {
+
+		this.isTouching(this.video, this.setTime.bind(this));
+
+		window.requestAnimationFrame(this.scrollPlay.bind(this));
+
 	}
 
-	isTouching(video, callback);
-	window.requestAnimationFrame(scrollPlay);
+	this.setTime = function () {
+		this.frameNr = (window.pageYOffset / (this.video.offsetTop + this.video.offsetHeight)) * this.video.duration;
+		this.video.currentTime = this.frameNr;
+	}
+
+	this.isTouching = function (el, callback) {
+
+		if (window.pageYOffset >= el.offsetTop && window.pageYOffset < (el.offsetTop + el.offsetHeight) && !el.classList.contains('active')) {
+			el.classList.add('active');
+			console.log("LOCK!");
+		} else if (window.pageYOffset > (el.offsetTop + el.offsetHeight) && el.classList.contains('active'))  {
+			el.classList.remove('active');
+			this.video.currentTime = this.video.duration;
+			console.log("UNLOCK 'A'!");
+		} else if (window.pageYOffset < el.offsetTop && el.classList.contains('active')) {
+			el.classList.remove('active');		
+			console.log("UNLOCK 'B'!");
+		}
+
+		if (window.pageYOffset >= el.offsetTop && window.pageYOffset <= el.offsetTop + el.offsetHeight) {
+			console.log('callback call');
+			callback.call(this);
+		}
+
+	}
 
 }
 
-function isTouching (el, callback) {
-	if (window.pageYOffset >= el.offsetTop && window.pageYOffset < (el.offsetTop + el.offsetHeight) && !el.classList.contains('active')) {
-		el.classList.add('active');
-		console.log("LOCK!");
-	} else if (window.pageYOffset > (el.offsetTop + el.offsetHeight) && el.classList.contains('active'))  {
-		el.classList.remove('active');
-		video.currentTime = video.duration;
-		console.log("UNLOCK 'A'!");
-	} else if (window.pageYOffset < el.offsetTop && el.classList.contains('active')) {
-		el.classList.remove('active');		
-		console.log("UNLOCK 'B'!");
-	}
+document.addEventListener('DOMContentLoaded', function () {
 
-	if (window.pageYOffset >= el.offsetTop && window.pageYOffset <= el.offsetTop + el.offsetHeight) {
-		console.log('callback call');
-		callback();
-	}
+	new VideoPlayOnScroll({
+		el: document.querySelector('video')
+	});
 
-}
+}, false);
