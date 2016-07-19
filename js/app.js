@@ -1,18 +1,20 @@
 function VideoPlayOnScroll (params) {
 
+	this.params = params;
+
 	// properties
 	this.frameNr = 0
 
 	// catch error
 	try {
 
-		if (typeof params.el === 'undefined') {
+		if (typeof this.params.el === 'undefined') {
 
             throw new Error('Initialisation error VideoPlayOnScroll: Element missing!');
 
 		} else {
 
-			this.video = params.el;
+			this.video = this.params.el;
 
 		}
 
@@ -50,7 +52,7 @@ function VideoPlayOnScroll (params) {
 
 	this.setTime = function () {
 		this.frameNr = (window.pageYOffset / (this.video.offsetTop + this.video.offsetHeight)) * this.video.duration;
-		this.video.currentTime = this.frameNr;
+		this.video.currentTime = this.normaliseFrameVal(this.frameNr);
 	}
 
 	this.isTouching = function (el, callback) {
@@ -86,12 +88,31 @@ function VideoPlayOnScroll (params) {
 
 	}
 
+	this.normaliseFrameVal = function (f) {
+
+		var val = null;
+
+		if (this.params.round) {
+
+			val = Math.ceil(f);
+
+		} else {
+
+			val = f;
+
+		}
+
+		return val;
+
+	}
+
 }
 
 document.addEventListener('DOMContentLoaded', function () {
 
 	new VideoPlayOnScroll({
-		el: document.querySelector('video')
+		el: document.querySelector('video'),
+		round: true
 	});
 
 }, false);
