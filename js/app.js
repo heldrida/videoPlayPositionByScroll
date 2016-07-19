@@ -4,7 +4,7 @@ function VideoPlayOnScroll (params) {
 
 	// properties
 	this.frameNr = 0;
-    this.friction = 0.01;
+    this.friction = 0.1;
 	this.vy = 0;
 	this.perc = 0;
 
@@ -68,7 +68,8 @@ function VideoPlayOnScroll (params) {
 	this.setTime = function () {
 		this.perc = (window.pageYOffset / (this.video.offsetTop + this.video.offsetHeight));
 		this.frameNr = this.perc * this.video.duration;
-		this.video.currentTime += (this.perc * this.video.duration);
+		this.video.currentTime += ((this.perc * this.video.duration) - this.video.currentTime) * this.friction;
+		console.log('this.video.currentTime', this.video.currentTime);
 	}
 
 	this.isTouching = function (el, callback) {
