@@ -25,12 +25,19 @@ function VideoPlayOnScroll (params) {
 	/**
      * Event Listeners
      */
+
+    // initilise the scroll play after the video metadata is available
 	this.video.addEventListener('loadedmetadata', function () {
+
 		window.requestAnimationFrame(this.scrollPlay.bind(this));
+
 	}.bind(this));
 
+	// execute any callbacks after  the video terminares
 	this.video.addEventListener('ended', function () {
-		console.log('video ended!');
+
+		this.videoEndedCallback.call(this);
+
 	}.bind(this));
 
 	this.scrollPlay = function () {
@@ -48,22 +55,34 @@ function VideoPlayOnScroll (params) {
 
 	this.isTouching = function (el, callback) {
 
+		// toggle active class and set the duration if inside the boundaries
 		if (window.pageYOffset >= el.offsetTop && window.pageYOffset < (el.offsetTop + el.offsetHeight) && !el.classList.contains('active')) {
+
 			el.classList.add('active');
-			console.log("LOCK!");
+
 		} else if (window.pageYOffset > (el.offsetTop + el.offsetHeight) && el.classList.contains('active'))  {
+
 			el.classList.remove('active');
 			this.video.currentTime = this.video.duration;
-			console.log("UNLOCK 'A'!");
+
 		} else if (window.pageYOffset < el.offsetTop && el.classList.contains('active')) {
+
 			el.classList.remove('active');		
-			console.log("UNLOCK 'B'!");
+
 		}
 
+		// optimised to call only if inside the boundaries
 		if (window.pageYOffset >= el.offsetTop && window.pageYOffset <= el.offsetTop + el.offsetHeight) {
-			console.log('callback call');
+
 			callback.call(this);
+
 		}
+
+	}
+
+	this.videoEndedCallback = function () {
+
+		console.log('video ended call back!');
 
 	}
 
