@@ -4,7 +4,7 @@ function VideoPlayOnScroll (params) {
 
 	// properties
 	this.frameNr = 0;
-    this.friction = 0.1;
+    this.friction = 0.02;
 	this.vy = 0;
 	this.perc = 0;
 
